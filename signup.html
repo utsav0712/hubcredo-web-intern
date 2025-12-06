@@ -18,6 +18,26 @@
         <p>Already have an account? <a href="index.html">Login</a></p>
         <div id="signupError" class="error"></div>
     </div>
+
+        <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
+
+    <!-- Your Firebase config (same as Firebase console) -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgJaZusvWwYY5qhJM5SzEWUEzXDBI44NI",
+        authDomain: "hubcredo-auth-162ca.firebaseapp.com",
+        projectId: "hubcredo-auth-162ca",
+        storageBucket: "hubcredo-auth-162ca.firebasestorage.app",
+        messagingSenderId: "434617954120",
+        appId: "1:434617954120:web:c5d63ef13b57475192cd7d",
+        measurementId: "G-Q0GHSWESM4"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>
