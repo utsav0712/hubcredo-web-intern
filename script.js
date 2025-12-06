@@ -1,41 +1,64 @@
-// Simulate user storage (in production, use Firebase, Supabase, etc.)
-let users = [];
+const auth = firebase.auth();
 
-// Sign Up
-document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+// SIGNUP PAGE
+const signupForm = document.getElementById('signupForm');
+if (signupForm) {
+  signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
     const password = document.getElementById('signupPassword').value;
     const errorDiv = document.getElementById('signupError');
     errorDiv.textContent = '';
 
-    if (users.some(user => user.email === email)) {
-        errorDiv.textContent = 'Email already exists!';
-        return;
+    if (!name || !email || password.length < 6) {
+      errorDiv.textContent = 'Please fill all fields. Password must be at least 6 characters.';
+      return;
     }
 
-    users.push({ name, email, password });
-    alert('Sign up successful! You can now log in.');
-    window.location.href = 'index.html';
-});
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      await cred.user.updateProfile({ displayName: name });
+      alert('Signup successful! Please login.');
+      window.location.href = 'index.html';
+    } catch (err) {
+      errorDiv.textContent = err.message;
+    }
+  });
+}
 
-// Login
-document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+// LOGIN PAGE
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const errorDiv = document.getElementById('loginError');
     errorDiv.textContent = '';
 
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-        localStorage.setItem('currentUser', user.name);
-        window.location.href = 'dashboard.html';
-    } else {
-        errorDiv.textContent = 'Invalid email or password!';
+    if (!email || !password) {
+      errorDiv.textContent = 'Please enter email and password.';
+      return;
     }
-});
 
-// Dashboard
-document.getElementById('username')?.textContent = localStorage.getItem('currentUser');
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      window.location.href = 'dashboard.html';
+    } catch (err) {
+      errorDiv.textContent = err.message;
+    }
+  });
+}
+
+// DASHBOARD PAGE
+const usernameSpan = document.getElementById('username');
+if (usernameSpan) {
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      window.location.href = 'index.html';
+    } else {
+      usernameSpan.textContent = user.displayName || user.email;
+    }
+  });
+}
